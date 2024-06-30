@@ -1,0 +1,35 @@
+on:
+  push:
+    branches:
+      - "master"
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  build-binaries:
+    strategy:
+      matrix:
+        profile:
+          - chalice:
+              keyboard: "chalice"
+          - planck:
+              keyboard: "planck/rev6_drop"
+    runs-on: ubuntu-latest
+    container: ghcr.io/qmk/qmk_cli
+    steps:
+      - uses: actions/checkout@v4
+      - name: requirements
+        run: apt-get update &&  apt-get install -y --no-install-recommends jq
+      - name: build 
+        continue-on-error: true
+        run: |
+          qmk import-keymap -kb ${{ matrix.profile.keyboard }} -km ${{ matrix.profile.name}}.json 
+          qmk compile -kb ${{ matrix.profile.keyboard }} -km jonk-${{ matrix.profile.name}} -t builds/jonk-${{ matrix.profile.name}}
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: "${{ matrix.profile.name  }}:latest"
+          title: ${{ matrix.profile.name }}
+          prerelease: false
+          files: "build/jonk-${{ matrix.profile.name }}.bin"
