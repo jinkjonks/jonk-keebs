@@ -12,8 +12,10 @@ jobs:
       matrix:
         profile:
           - chalice:
+              name: "chalice"
               keyboard: "chalice"
           - planck:
+              name: "planck"
               keyboard: "planck/rev6_drop"
     runs-on: ubuntu-latest
     container: ghcr.io/qmk/qmk_cli
