@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: requirements
-        run: apt-get update &&  apt-get install -y --no-install-recommends jq
+        run: qmk setup -y
       - name: build 
         continue-on-error: true
         run: |
